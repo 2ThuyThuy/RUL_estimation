@@ -5,7 +5,8 @@ CREATE TABLE `User` (
   `first_name` varchar(255),
   `last_name` varchar(255),
   `email` varchar(255),
-  `phone_number` varchar(255)
+  `phone_number` varchar(255),
+  `role` int
 );
 
 CREATE TABLE `UserMachine` (
