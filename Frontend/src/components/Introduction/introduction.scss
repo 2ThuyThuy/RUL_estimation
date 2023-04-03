@@ -1,0 +1,58 @@
+.introduction {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  .introduction__background {
+    top: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .introduction__overlay {
+    top: 0;
+    background: rgba(6, 47, 153, 0.4);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+  }
+  .introduction__center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    font-family: "Inter";
+    font-style: normal;
+
+    h1 {
+      font-size: 110px;
+      line-height: 133px;
+      text-align: center;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    h2 {
+      font-weight: 400;
+      font-size: 50px;
+      line-height: 61px;
+      text-align: center;
+      color: #f85c5c;
+    }
+
+    h3 {
+      font-weight: 400;
+      font-size: 19px;
+      line-height: 23px;
+      text-align: center;
+
+      color: #ffffff;
+    }
+  }
+}

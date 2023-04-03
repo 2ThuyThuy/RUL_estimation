@@ -7,8 +7,6 @@ from flask import Blueprint, request
 from app.schema.schema_validator import user_validator, password_validator
 from app.models import User
 from app.extensions import logger, db
-
-
 api = Blueprint('users', __name__)
 
 
@@ -50,7 +48,6 @@ def create_user():
                       password_hash=hash_password(password),
                       first_name=first_name, last_name=last_name,
                       email=email, phone_number=phone_number, role=0)
-    print(new_values.to_json())
     db.session.add(new_values)
     db.session.commit()
 
