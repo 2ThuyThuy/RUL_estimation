@@ -1,10 +1,19 @@
+from datetime import timedelta
 from flask import Blueprint
 from app.models import User
 from werkzeug.security import check_password_hash
 from app.utils import parse_req, FieldString, send_result, send_error, get_datetime_now
-from app.extensions import logger,  db
+from app.extensions import logger,  db,  jwt
+from flask_jwt_extended import (
+    jwt_required, create_access_token,
+    get_jwt_identity, create_refresh_token,
+    get_jwt
+)
 
+ACCESS_EXPIRES = timedelta(days=30)
+#REFRESH_EXPIRES = timedelta(days=90)
 api = Blueprint('auth', __name__)
+
 
 @api.route('/login', methods=['POST'])
 def login():
@@ -35,12 +44,67 @@ def login():
     if not check_password_hash(user.password_hash, password):
         return send_error(message='Invalid username or password.\nPlease try again')
 
+    access_token = create_access_token(identity=user.user_id, expires_delta=ACCESS_EXPIRES)
+    #refresh_token = create_refresh_token(identity=user.id, expires_delta=REFRESH_EXPIRES)
+
+    # Store the tokens in our store with a status of not currently revoked.
+    # Token.add_token_to_database(access_token, user.id)
+    # Token.add_token_to_database(refresh_token, user.id)
+
     data = {
         'username': user.username,
         'user_id': user.user_id,
         'first_name': user.first_name,
         'last_name': user.last_name,
-        'email': user.email
+        'email': user.email,
+        'jwt': access_token
     }
-
     return send_result(data=data, message="Logged in successfully!")
+
+#
+# @api.route('/refresh', methods=['POST'])
+# @jwt_required(refresh=True)
+# def refresh():
+#     """ This api use for refresh expire time of the access token. Please inject the refresh token in Authorization header
+#         Requests Body:
+#             refresh_token: string,require
+#             The refresh token return in the login API
+#         Returns:
+#             access_token: string
+#             A new access_token
+#         Examples::
+#     """
+#     current_user_id = get_jwt_identity()
+#     access_token = create_access_token(identity=current_user_id, expires_delta=ACCESS_EXPIRES)
+#
+#     # Store the tokens in our store with a status of not currently revoked.
+#     Token.add_token_to_database(access_token, current_user_id)
+#
+#     ret = {
+#         'access_token': access_token
+#     }
+#     return send_result(data=ret)
+#
+#
+# @api.route('/logout', methods=['DELETE'])
+# @jwt_required
+# def logout():
+#     """ This api logout current user, revoke current access token
+#        Examples::
+#     """
+#
+#     jti = get_jwt()['jti']
+#     # revoke current token from database
+#     Token.revoke_token(jti)
+#     return send_result(message="Logout successfully!")
+#
+#
+# # check token revoked_store
+# @jwt.token_in_blacklist_loader
+# def check_if_token_is_revoked(decrypted_token):
+#     # return False
+#     return Token.is_token_revoked(decrypted_token)
+
+
+
+

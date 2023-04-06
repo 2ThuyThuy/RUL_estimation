@@ -17,6 +17,11 @@ class AppConfig(Config):
     HOST = '0.0.0.0'
     TEMPLATES_AUTO_RELOAD = False
 
+    # JWT Config
+    JWT_SECRET_KEY = "jwt_secret"
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
+
     # mysql
     #SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_DATABASE_URI = 'mysql://root:abcd1234@localhost/rul'

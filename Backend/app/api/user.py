@@ -28,11 +28,8 @@ def create_user():
         last_name = json_data.get('last_name', None)
         email = json_data.get('email', None)
         phone_number = json_data.get('phone_number', None)
-
-
-
     except Exception as ex:
-        #logger.error('{} Parameters error: '.format(get_datetime_now().strftime('%Y-%b-%d %H:%M:%S')) + str(ex))
+        logger.error('Parameters error: ' + str(ex))
         return send_error(message="Parameters error: " + str(ex))
 
     user_duplicated = User.query.filter_by(username=username).first()
