@@ -25,3 +25,4 @@ def main_dashboard_client():
 
     return send_result(data=data, message="Create user successfully!")
 
+
