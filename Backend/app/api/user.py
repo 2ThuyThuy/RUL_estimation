@@ -27,7 +27,7 @@ def create_user():
         first_name = json_data.get('first_name', None)
         last_name = json_data.get('last_name', None)
         email = json_data.get('email', None)
-        phone_number = json_data.get('phone_number', None)
+        #phone_number = json_data.get('phone_number', None)
     except Exception as ex:
         logger.error('Parameters error: ' + str(ex))
         return send_error(message="Parameters error: " + str(ex))
@@ -35,6 +35,10 @@ def create_user():
     user_duplicated = User.query.filter_by(username=username).first()
     if user_duplicated:
         return send_error(message="The username has existed!")
+
+    email_duplicated = User.query.filter_by(email=email).first()
+    if email_duplicated:
+        return send_error(message="The email has existed!")
 
     if is_password_contain_space(password):
         return send_error(message='Password cannot contain spaces')
@@ -44,7 +48,7 @@ def create_user():
     new_values = User(user_id=_user_id, username=username,
                       password_hash=hash_password(password),
                       first_name=first_name, last_name=last_name,
-                      email=email, phone_number=phone_number, role=0)
+                      email=email, role=0)
     db.session.add(new_values)
     db.session.commit()
 
