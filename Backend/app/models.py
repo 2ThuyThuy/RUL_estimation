@@ -1,7 +1,9 @@
 from app.extensions import db
 from sqlalchemy.dialects.mysql import INTEGER, TEXT
 from flask_jwt_extended import decode_token, get_jwt_identity, get_jwt
-from app.utils import send_error,  get_timestamp_now
+from app.utils import send_error, get_timestamp_now
+
+
 class User(db.Model):
     __tablename__ = 'user'
 
@@ -10,7 +12,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
-    email = db.Column(db.String(200))
+    email = db.Column(db.String(200), nullable=False)
     phone_number = db.Column(db.String(20))
     role = db.Column(db.Boolean, default=0)
 
@@ -24,119 +26,109 @@ class User(db.Model):
             "phone_number": self.phone_number
         }
 
+    @staticmethod
+    def many_to_json(objects):
+        items = []
+        for o in objects:
+            item = {
+                'user_id': o.user_id,
+                'user_name': o.user_name,
+                'first_name': o.first_name,
+                'last_name': o.last_name,
+                'email': o.email,
+                'phone_number': o.phone_number
+            }
+            items.append(item)
+        return item
+
     @classmethod
     def get_by_user_id(cls, _user_id):
         return cls.query.get(_user_id)
 
+    @classmethod
+    def get_current_user(cls):
+        return cls.quey.get(get_jwt_identity())
 
-# class Token(db.Model):
-#     __tablename__ = 'tokens'
-#     id = db.Column(db.Integer, primary_key=True)
-#     jti = db.Column(db.String(36), nullable=False)
-#     token_type = db.Column(db.String(10), nullable=False)
-#     user_identity = db.Column(db.String(50), nullable=False)
-#     revoked = db.Column(db.Boolean, nullable=False)
-#     expires = db.Column(INTEGER(unsigned=True), nullable=False)
-#
-#     @staticmethod
-#     def add_token_to_database(encoded_token, user_identity):
-#         """
-#             Adds a new token to the database. It is not revoked when it is added.
-#             :param encoded_token:
-#             :param user_identity:
-#         """
-#         decoded_token = decode_token(encoded_token)
-#         jti = decoded_token['jti']
-#         token_type = decoded_token['type']
-#         expires = decoded_token['exp']
-#         revoked = False
-#         db_token = Token(
-#             jti=jti,
-#             token_type=token_type,
-#             user_identity=user_identity,
-#             expires=expires,
-#             revoked=revoked,
-#         )
-#         db.session.add(db_token)
-#         db.session.commit()
-#
-#     @staticmethod
-#     def is_token_revoked(decoded_token):
-#         """
-#             Checks if the given token is revoked or not. Because we are adding all the
-#             tokens that we create into this database, if the token is not present
-#             in the database we are going to consider it revoked, as we don't know where
-#             it was created.
-#         """
-#         jti = decoded_token['jti']
-#         token = Token.query.filter_by(jti=jti).first()
-#         if token:
-#             return token.revoked
-#         return True
-#
-#     @staticmethod
-#     def revoke_token(jti):
-#         """
-#             Revokes the given token. Raises a TokenNotFound error if the token does
-#             not exist in the database
-#         """
-#         try:
-#             token = Token.query.filter_by(jti=jti).first()
-#             token.revoked = True
-#             db.session.commit()
-#         except Exception as ex:
-#             return send_error(message=str(ex))
-#
-#     @staticmethod
-#     def revoke_all_token(users_identity):
-#         """
-#             Revokes the given token. Raises a TokenNotFound error if the token does
-#             not exist in the database.
-#             Set token Revoked flag is False to revoke this token.
-#             Args:
-#             users_identity: list or string, require
-#                 list users id or user_id. Used to query all token of the user on the database
-#         """
-#         try:
-#             if type(users_identity) is not list:
-#                 # convert user_id to list user_ids
-#                 users_identity = [users_identity]
-#             tokens = Token.query.filter(Token.user_identity.in_(users_identity), Token.revoked == False).all()
-#             for token in tokens:
-#                 token.revoked = True
-#             db.session.commit()
-#         except Exception as ex:
-#             return send_error(message=str(ex))
-#
-#     @staticmethod
-#     def revoke_all_token2(users_identity):
-#         """
-#         Revokes all token of the given user except current token. Raises a TokenNotFound error if the token does
-#         not exist in the database.
-#         Set token Revoked flag is False to revoke this token.
-#         Args:
-#             users_identity: user id
-#         """
-#         jti = get_jwt()['jti']
-#         try:
-#             tokens = Token.query.filter(Token.user_identity == users_identity, Token.revoked == False,
-#                                         Token.jti != jti).all()
-#             for token in tokens:
-#                 token.revoked = True
-#             db.session.commit()
-#         except Exception as ex:
-#             return send_error(message=str(ex))
-#
-#     @staticmethod
-#     def prune_database():
-#         """
-#         Delete tokens that have expired from the database.
-#         How (and if) you call this is entirely up you. You could expose it to an
-#         endpoint that only administrators could call, you could run it as a cron,
-#         set it up with flask cli, etc.
-#         """
-#         now_in_seconds = get_timestamp_now()
-#         Token.query.filter(Token.expires < now_in_seconds).delete()
-#         db.session.commit()
+    @classmethod
+    def find_all(cls):
+        return cls.query.all()
+
+
+class UserMachine(db.Model):
+    __tablename__ = 'UserMachine'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(50), db.ForeignKey("user.user_id"))
+    machine_id = db.Column(db.Integer, db.ForeignKey("MachineProcessed.machine_id"))
+
+
+class MachineProcessed(db.Model):
+    __tablename__ = 'MachineProcessed'
+
+    machine_id = db.Column(db.Integer, primary_key=True)
+    time_stamp = db.Column(db.Integer, primary_key=True)
+    op_setting_1 = db.Column(db.Float, nullable=False)
+    op_setting_2 = db.Column(db.Float, nullable=False)
+    op_setting_3 = db.Column(db.Float, nullable=False)
+    sensor_1 = db.Column(db.Float, nullable=False)
+    sensor_2 = db.Column(db.Float, nullable=False)
+    sensor_3 = db.Column(db.Float, nullable=False)
+    sensor_4 = db.Column(db.Float, nullable=False)
+    sensor_5 = db.Column(db.Float, nullable=False)
+    sensor_6 = db.Column(db.Float, nullable=False)
+    sensor_7 = db.Column(db.Float, nullable=False)
+    sensor_8 = db.Column(db.Float, nullable=False)
+    sensor_9 = db.Column(db.Float, nullable=False)
+    sensor_10 = db.Column(db.Float, nullable=False)
+    sensor_11 = db.Column(db.Float, nullable=False)
+    sensor_12 = db.Column(db.Float, nullable=False)
+    sensor_13 = db.Column(db.Float, nullable=False)
+    sensor_14 = db.Column(db.Float, nullable=False)
+    sensor_15 = db.Column(db.Float, nullable=False)
+    sensor_16 = db.Column(db.Float, nullable=False)
+    sensor_17 = db.Column(db.Float, nullable=False)
+    sensor_18 = db.Column(db.Float, nullable=False)
+    sensor_19 = db.Column(db.Float, nullable=False)
+    sensor_20 = db.Column(db.Float, nullable=False)
+    sensor_21 = db.Column(db.Float, nullable=False)
+
+    @staticmethod
+    def many_to_json(objects):
+        items = []
+        for obj in objects:
+            item = {
+                'machine_id': obj.machine_id,
+                'time_stamp': obj.time_stamp,
+                'op_setting_1': obj.op_setting_1,
+                'op_setting_2': obj.op_setting_2,
+                'op_setting_3': obj.op_setting_3,
+                'sensor_1': obj.sensor_1,
+                'sensor_2': obj.sensor_2,
+                'sensor_3': obj.sensor_3,
+                'sensor_4': obj.sensor_4,
+                'sensor_5': obj.sensor_5,
+                'sensor_6': obj.sensor_6,
+                'sensor_7': obj.sensor_7,
+                'sensor_8': obj.sensor_8,
+                'sensor_9': obj.sensor_9,
+                'sensor_10': obj.sensor_10,
+                'sensor_11': obj.sensor_11,
+                'sensor_12': obj.sensor_12,
+                'sensor_13': obj.sensor_13,
+                'sensor_14': obj.sensor_14,
+                'sensor_15': obj.sensor_15,
+                'sensor_16': obj.sensor_16,
+                'sensor_17': obj.sensor_17,
+                'sensor_18': obj.sensor_18,
+                'sensor_19': obj.sensor_19,
+                'sensor_20': obj.sensor_20,
+                'sensor_21': obj.sensor_21
+            }
+            items.append(item)
+        return items
+
+    @classmethod
+    def get_by_machine_id(cls, _machine_id):
+        return cls.query.get(_machine_id)
+
 
 

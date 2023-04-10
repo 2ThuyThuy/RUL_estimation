@@ -1,9 +1,10 @@
 from flask import Flask, request
 from flask_cors import CORS
-
 from app.settings import AppConfig
 from app.extensions import db, jwt
 import app.api as api_push
+
+
 def create_app(config_object=AppConfig):
 
     app = Flask(__name__, static_url_path="", static_folder="./files")
