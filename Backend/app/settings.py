@@ -27,4 +27,4 @@ class AppConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql://root:abcd1234@localhost/rul'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     ## check add gitignore
-    
+    ## add a file hehe
