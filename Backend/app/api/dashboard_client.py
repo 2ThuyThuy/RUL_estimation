@@ -1,6 +1,6 @@
 from datetime import timedelta
 from flask import Blueprint
-from app.models import User, MachineProcessed, UserMachine
+from app.models import User, MachineRaw, UserMachineRaw
 from app.utils import parse_req, FieldString, send_result, send_error, get_datetime_now
 from app.extensions import logger,  db,  jwt
 from flask_jwt_extended import (
@@ -19,12 +19,20 @@ def main_dashboard_client():
 
     user = User.query.filter_by(user_id=current_user).first()
 
-    machine = MachineProcessed.query.join(UserMachine).filter(UserMachine.user_id == current_user).all()
+    machine = MachineRaw.query.join(UserMachineRaw).filter(UserMachineRaw.user_id == current_user).all()
+    unit = MachineRaw.get_Unit_in_obj(machine)
+
+    with open('app/files/data/date_now.txt', 'r') as file:
+        get_day = file.readline()
+        file.close()
+
 
     data = {
         'id': user.user_id,
         'username': user.username,
-        'machine': MachineProcessed.many_to_json(machine)
+        'unit': unit,
+        'day_now': get_day
+        #'machine': MachineRaw.many_to_json(machine)
     }
 
     return send_result(data=data, message="Create user successfully!")

@@ -27,7 +27,7 @@ def create_user():
         first_name = json_data.get('first_name', None)
         last_name = json_data.get('last_name', None)
         email = json_data.get('email', None)
-        #phone_number = json_data.get('phone_number', None)
+        # phone_number = json_data.get('phone_number', None)
     except Exception as ex:
         logger.error('Parameters error: ' + str(ex))
         return send_error(message="Parameters error: " + str(ex))

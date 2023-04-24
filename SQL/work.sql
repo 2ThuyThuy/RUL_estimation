@@ -10,15 +10,21 @@ CREATE TABLE `User` (
 );
 
 CREATE TABLE `UserMachine` (
+  `id` int PRIMARY KEY,
   `user_id` int,
-  `machine_id` int,
-  `number_machine` int,
-  PRIMARY KEY (`user_id`, `machine_id`)
+  `Unit` int
+);
+
+CREATE TABLE `UserMachineRaw` (
+  `id` int PRIMARY KEY,
+  `user_id` int,
+  `Unit` int
 );
 
 CREATE TABLE `MachineProcessed` (
-  `machine_id` int PRIMARY KEY,
-  `time_stamp` int,
+  `Unit` int,
+  `Timestep` int,
+  `Timestamp` date,
   `op_setting_1` float,
   `op_setting_2` float,
   `op_setting_3` float,
@@ -42,12 +48,15 @@ CREATE TABLE `MachineProcessed` (
   `sensor_18` float,
   `sensor_19` float,
   `sensor_20` float,
-  `sensor_21` float
+  `sensor_21` float,
+  `cluster` int,
+  PRIMARY KEY (`Unit`, `Timestep`)
 );
 
-CREATE TABLE `Machine` (
-  `machine_id` int PRIMARY KEY,
-  `timeStamp` int,
+CREATE TABLE `MachineRaw` (
+  `Unit` int,
+  `Timestep` int,
+  `Timestamp` date,
   `op_setting_1` float,
   `op_setting_2` float,
   `op_setting_3` float,
@@ -71,23 +80,33 @@ CREATE TABLE `Machine` (
   `sensor_18` float,
   `sensor_19` float,
   `sensor_20` float,
-  `sensor_21` float
+  `sensor_21` float,
+  PRIMARY KEY (`Unit`, `Timestep`)
 );
 
-CREATE TABLE `CategoryMachine` (
-  `id` int PRIMARY KEY,
+CREATE TABLE `ReportRUL` (
+  `step_predict` int,
+  `Unit` int,
+  `day_pedict` date,
+  `day_error` date,
+  `remaining_day` int,
   `category` varchar(255),
-  `num_machine` int
+  `acc` float,
+  PRIMARY KEY (`step_predict`, `Unit`)
 );
 
 CREATE TABLE `TrainDataFused` (
-  `DataFused` float,
-  `machine_id` int,
-  `time` int
+  `smooth_health_indicator` float,
+  `Unit` int,
+  `Timestep` int
 );
 
 ALTER TABLE `UserMachine` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`);
 
-ALTER TABLE `UserMachine` ADD FOREIGN KEY (`machine_id`) REFERENCES `MachineProcessed` (`machine_id`);
+ALTER TABLE `UserMachineRaw` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`);
 
-ALTER TABLE `MachineProcessed` ADD FOREIGN KEY (`machine_id`) REFERENCES `CategoryMachine` (`id`);
+ALTER TABLE `UserMachine` ADD FOREIGN KEY (`Unit`) REFERENCES `MachineProcessed` (`Unit`);
+
+ALTER TABLE `UserMachineRaw` ADD FOREIGN KEY (`Unit`) REFERENCES `MachineRaw` (`Unit`);
+
+ALTER TABLE `MachineProcessed` ADD FOREIGN KEY (`Unit`) REFERENCES `ReportRUL` (`Unit`);

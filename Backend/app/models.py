@@ -54,18 +54,18 @@ class User(db.Model):
         return cls.query.all()
 
 
-class UserMachine(db.Model):
-    __tablename__ = 'UserMachine'
+class UserMachineRaw(db.Model):
+    __tablename__ = 'UserMachineRaw'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(50), db.ForeignKey("user.user_id"))
-    machine_id = db.Column(db.Integer, db.ForeignKey("MachineProcessed.machine_id"))
+    Unit = db.Column(db.Integer, db.ForeignKey("MachineRaw.Unit"))
 
 
-class MachineProcessed(db.Model):
-    __tablename__ = 'MachineProcessed'
-
-    machine_id = db.Column(db.Integer, primary_key=True)
-    time_stamp = db.Column(db.Integer, primary_key=True)
+class MachineRaw(db.Model):
+    __tablename__ = 'MachineRaw'
+    Unit = db.Column(db.Integer, primary_key=True)
+    Timestep = db.Column(db.Integer, primary_key=True)
+    Timestamp = db.Column(db.Date, nullable=False)
     op_setting_1 = db.Column(db.Float, nullable=False)
     op_setting_2 = db.Column(db.Float, nullable=False)
     op_setting_3 = db.Column(db.Float, nullable=False)
@@ -90,14 +90,26 @@ class MachineProcessed(db.Model):
     sensor_19 = db.Column(db.Float, nullable=False)
     sensor_20 = db.Column(db.Float, nullable=False)
     sensor_21 = db.Column(db.Float, nullable=False)
+    is_user = db.Column(db.Integer, nullable=False)
+
+
+    @staticmethod
+    def get_Unit_in_obj(objects):
+        Unit = None
+        for obj in objects:
+            Unit = obj.Unit
+            break
+        return Unit
+
 
     @staticmethod
     def many_to_json(objects):
         items = []
         for obj in objects:
             item = {
-                'machine_id': obj.machine_id,
-                'time_stamp': obj.time_stamp,
+                'Unit': obj.Unit,
+                'Timestep': obj.Timestep,
+                'Timestamp': obj.Timestamp,
                 'op_setting_1': obj.op_setting_1,
                 'op_setting_2': obj.op_setting_2,
                 'op_setting_3': obj.op_setting_3,
@@ -121,7 +133,8 @@ class MachineProcessed(db.Model):
                 'sensor_18': obj.sensor_18,
                 'sensor_19': obj.sensor_19,
                 'sensor_20': obj.sensor_20,
-                'sensor_21': obj.sensor_21
+                'sensor_21': obj.sensor_21,
+                'is_user': obj.is_user
             }
             items.append(item)
         return items
@@ -131,4 +144,107 @@ class MachineProcessed(db.Model):
         return cls.query.get(_machine_id)
 
 
+class UserMachine(db.Model):
+    __tablename__ = 'UserMachine'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(50), db.ForeignKey("user.user_id"))
+    Unit = db.Column(db.Integer, db.ForeignKey("MachineProcessed.Unit"))
 
+
+class MachineProcessed(db.Model):
+    __tablename__ = 'MachineProcessed'
+
+    Unit = db.Column(db.Integer, primary_key=True)
+    Timestep = db.Column(db.Integer, primary_key=True)
+    Timestamp = db.Column(db.Date, nullable=False)
+    op_setting_1 = db.Column(db.Float, nullable=False)
+    op_setting_2 = db.Column(db.Float, nullable=False)
+    op_setting_3 = db.Column(db.Float, nullable=False)
+    sensor_1 = db.Column(db.Float, nullable=False)
+    sensor_2 = db.Column(db.Float, nullable=False)
+    sensor_3 = db.Column(db.Float, nullable=False)
+    sensor_4 = db.Column(db.Float, nullable=False)
+    sensor_5 = db.Column(db.Float, nullable=False)
+    sensor_6 = db.Column(db.Float, nullable=False)
+    sensor_7 = db.Column(db.Float, nullable=False)
+    sensor_8 = db.Column(db.Float, nullable=False)
+    sensor_9 = db.Column(db.Float, nullable=False)
+    sensor_10 = db.Column(db.Float, nullable=False)
+    sensor_11 = db.Column(db.Float, nullable=False)
+    sensor_12 = db.Column(db.Float, nullable=False)
+    sensor_13 = db.Column(db.Float, nullable=False)
+    sensor_14 = db.Column(db.Float, nullable=False)
+    sensor_15 = db.Column(db.Float, nullable=False)
+    sensor_16 = db.Column(db.Float, nullable=False)
+    sensor_17 = db.Column(db.Float, nullable=False)
+    sensor_18 = db.Column(db.Float, nullable=False)
+    sensor_19 = db.Column(db.Float, nullable=False)
+    sensor_20 = db.Column(db.Float, nullable=False)
+    sensor_21 = db.Column(db.Float, nullable=False)
+    cluster = db.Column(db.Integer, nullable=False)
+    is_user = db.Column(db.Integer, nullable=False)
+    @staticmethod
+    def many_to_json(objects):
+        items = []
+        for obj in objects:
+            item = {
+                'Unit': obj.Unit,
+                'Timestep': obj.Timestep,
+                'Timestamp': obj.Timestamp,
+                'op_setting_1': obj.op_setting_1,
+                'op_setting_2': obj.op_setting_2,
+                'op_setting_3': obj.op_setting_3,
+                'sensor_1': obj.sensor_1,
+                'sensor_2': obj.sensor_2,
+                'sensor_3': obj.sensor_3,
+                'sensor_4': obj.sensor_4,
+                'sensor_5': obj.sensor_5,
+                'sensor_6': obj.sensor_6,
+                'sensor_7': obj.sensor_7,
+                'sensor_8': obj.sensor_8,
+                'sensor_9': obj.sensor_9,
+                'sensor_10': obj.sensor_10,
+                'sensor_11': obj.sensor_11,
+                'sensor_12': obj.sensor_12,
+                'sensor_13': obj.sensor_13,
+                'sensor_14': obj.sensor_14,
+                'sensor_15': obj.sensor_15,
+                'sensor_16': obj.sensor_16,
+                'sensor_17': obj.sensor_17,
+                'sensor_18': obj.sensor_18,
+                'sensor_19': obj.sensor_19,
+                'sensor_20': obj.sensor_20,
+                'sensor_21': obj.sensor_21,
+                'cluster': obj.cluster,
+                'is_user': obj.is_user
+            }
+            items.append(item)
+        return items
+
+    @classmethod
+    def get_by_machine_id(cls, _machine_id):
+        return cls.query.get(_machine_id)
+
+
+class ReportRUL(db.Model):
+    __tablename__ = 'ReportRUL'
+    id = db.Column(db.Integer, primary_key=True)
+    Unit = db.Column(db.Integer, db.ForeignKey("MachineProcessed.Unit"))
+    Timestep = db.Column(db.Integer, nullable=False)
+    day_predict = db.Column(db.Date, nullable=False)
+    day_error = db.Column(db.Date, nullable=False)
+    remaining_day = db.Column(db.Integer, nullable=False)
+    category = db.Column(db.String(255), nullable=False)
+    acc = db.Column(db.Float, nullable=False)
+    is_user = db.Column(db.Integer, nullable=False)
+
+    def to_json(self):
+        return {
+            "Unit": self.Unit,
+            "Timestep": self.Timestep,
+            "day_predict": self.day_predict,
+            "day_error": self.day_error,
+            "remaining_day": self.remaining_day,
+            "category": self.category,
+            "acc": self.acc
+        }
