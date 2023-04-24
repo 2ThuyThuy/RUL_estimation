@@ -62,14 +62,27 @@ class residualSimilarityModel:
 
     def fit(self, dataTrain, polynomial_deg=3):  # data train has many machines
         units = dataTrain.Unit.unique()
+
+        # for unit in units:
+        #     each_unit = dataTrain[dataTrain.Unit == unit].copy()
+        #     poly = np.polyfit(each_unit.Timestep, each_unit.smooth_health_indicator, polynomial_deg)  ## Poly
+        #     self.df_model = self.df_model.append(pd.Series({
+        #         'Unit': unit,
+        #         'lifeSpan': each_unit.Timestep.values[-1],
+        #         'poly': poly,
+        #     }), ignore_index=True)
+
+        list_poly = []
         for unit in units:
             each_unit = dataTrain[dataTrain.Unit == unit].copy()
             poly = np.polyfit(each_unit.Timestep, each_unit.smooth_health_indicator, polynomial_deg)  ## Poly
-            self.df_model = self.df_model.append(pd.Series({
+            list_poly.append(pd.Series({
                 'Unit': unit,
                 'lifeSpan': each_unit.Timestep.values[-1],
                 'poly': poly,
-            }), ignore_index=True)
+            }).to_frame().T)
+        self.df_model = pd.concat(list_poly)
+
 
     def predictRUL(self, dataTest, NEIGHBORS_NUM=20):  # data test is a machine
         list_score = []
