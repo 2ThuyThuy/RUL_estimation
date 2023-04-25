@@ -112,7 +112,7 @@ def increase_day():
         'check_predict': check_predict
         # 'machine': MachineRaw.many_to_json(machine)
     }
-    return send_result(data=data, message="Create user successfully!")
+    return send_result(data=data, message="increase day successfully!")
 
 
 @api.route('/dec_day', methods=['PUT'])
@@ -145,7 +145,7 @@ def decrease_day():
     data = {
         'date_now': date_now.strftime("%Y-%m-%d")
     }
-    return send_result(data=data, message="Create user successfully!")
+    return send_result(data=data, message="decrease days successfully!")
 
 
 # add jwt here
