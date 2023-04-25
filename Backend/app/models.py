@@ -229,7 +229,7 @@ class MachineProcessed(db.Model):
 class ReportRUL(db.Model):
     __tablename__ = 'ReportRUL'
     id = db.Column(db.Integer, primary_key=True)
-    Unit = db.Column(db.Integer, db.ForeignKey("MachineProcessed.Unit"))
+    Unit = db.Column(db.Integer, nullable=False)
     Timestep = db.Column(db.Integer, nullable=False)
     day_predict = db.Column(db.Date, nullable=False)
     day_error = db.Column(db.Date, nullable=False)
@@ -248,3 +248,19 @@ class ReportRUL(db.Model):
             "category": self.category,
             "acc": self.acc
         }
+
+    @staticmethod
+    def many_to_json(objects):
+        items = []
+        for obj in objects:
+            item = {
+                'Unit': obj.Unit,
+                'Timestep': obj.Timestep,
+                'day_predict': obj.day_predict,
+                'day_error': obj.day_error,
+                'remaining_day': obj.remaining_day,
+                'category': obj.category,
+                'acc': obj.acc
+            }
+            items.append(item)
+        return items

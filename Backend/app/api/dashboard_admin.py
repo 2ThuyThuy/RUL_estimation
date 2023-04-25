@@ -70,11 +70,13 @@ def increase_day():
             get_timestamp = group_unit['Timestamp']
 
             ## check large in 50
-            data_to_fused = df_processed[df_processed.Unit.isin(get_unit[get_unit > 50].index.values)].copy().reset_index(drop=True)
+            data_to_fused = df_processed[
+                df_processed.Unit.isin(get_unit[get_unit > 50].index.values)].copy().reset_index(drop=True)
             ## check have data now
             # print(get_timestamp[get_timestamp == date_here].index.values)
             data_to_fused = df_processed[
-                df_processed.Unit.isin(get_timestamp[get_timestamp == date_here].index.values)].copy().reset_index(drop=True)
+                df_processed.Unit.isin(get_timestamp[get_timestamp == date_here].index.values)].copy().reset_index(
+                drop=True)
 
         if len(data_to_fused) > 0:
             data_to_fused = degradationSensorFusion(data_to_fused, sensorToFuse, weights)
@@ -147,6 +149,35 @@ def decrease_day():
 
 
 # add jwt here
+@api.route('/admin_pie', methods=['GET'])
+def pie_chart():
+    good, observe, warning, error = 0, 0, 0, 0
+    with open('app/files/data/date_now.txt', 'r') as file:
+        get_day = file.readline()
+        file.close()
+    date_now = datetime.strptime(get_day, '%Y-%m-%d').date()
+
+    nums_machine = len(db.session.query(MachineRaw.Unit,
+                                        MachineRaw.is_user == 1).distinct().all())
+    reportRUL = ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                       ReportRUL.is_user == 1).all()
+    if len(reportRUL) > 0:
+        df_report = pd.DataFrame.from_records(ReportRUL.many_to_json(reportRUL))
+
+        good = len(df_report[df_report.category == 'Good'])
+        observe = len(df_report[df_report.category == 'observe'])
+        warning = len(df_report[df_report.category == 'warning'])
+        error = nums_machine - (good + observe + warning)
+
+    data = {
+        'labels': ['good', 'observe', 'warning', 'error'],
+        'data': [good, observe, warning, error]
+
+    }
+    return send_result(data=data, message="main admin!")
+
+
+# add jwt here
 @api.route('/main_admin', methods=['GET'])
 def main_admin():
     nums_clients = len(User.query.filter(User.role == 0).all())
@@ -157,8 +188,6 @@ def main_admin():
         'nums_clients': nums_clients,
         'nums_machine': nums_machine
     }
-    return send_result(data=data, message="Create user successfully!")
-
-
+    return send_result(data=data, message="main admin!")
 
 ## get here
