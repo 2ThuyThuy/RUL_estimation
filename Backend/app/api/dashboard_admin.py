@@ -167,17 +167,19 @@ def pie_chart():
     #     observe = len(df_report[df_report.category == 'observe'])
     #     warning = len(df_report[df_report.category == 'warning'])
     #     error = nums_machine - (good + observe + warning)
+    check_report = len(ReportRUL.query.filter(ReportRUL.is_user == 1).all())
+    if check_report > 0 :
+        good = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                          ReportRUL.category == "Good",
+                                          ReportRUL.is_user == 1).all())
+        observe = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                             ReportRUL.category == "observe",
+                                             ReportRUL.is_user == 1).all())
+        warning = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                             ReportRUL.category == "warning",
+                                             ReportRUL.is_user == 1).all())
 
-    good = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
-                                      ReportRUL.category == "Good",
-                                      ReportRUL.is_user == 1).all())
-    observe = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
-                                         ReportRUL.category == "observe",
-                                         ReportRUL.is_user == 1).all())
-    warning = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
-                                         ReportRUL.category == "warning",
-                                         ReportRUL.is_user == 1).all())
-    error = nums_machine - (good + observe + warning)
+        error = nums_machine - (good + observe + warning)
 
     data = {
         'labels': ['good', 'observe', 'warning', 'error'],
