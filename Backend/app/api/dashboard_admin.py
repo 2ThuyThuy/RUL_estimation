@@ -65,9 +65,16 @@ def increase_day():
 
         data_to_fused = []
         if len(df_processed) > 0:
-            get_unit = df_processed.groupby(by='Unit').max()['Timestep']
+            group_unit = df_processed.groupby(by='Unit').max()
+            get_unit = group_unit['Timestep']
+            get_timestamp = group_unit['Timestamp']
+
+            ## check large in 50
+            data_to_fused = df_processed[df_processed.Unit.isin(get_unit[get_unit > 50].index.values)].copy().reset_index(drop=True)
+            ## check have data now
+            # print(get_timestamp[get_timestamp == date_here].index.values)
             data_to_fused = df_processed[
-                df_processed.Unit.isin(get_unit[get_unit > 50].index.values)].copy().reset_index(drop=True)
+                df_processed.Unit.isin(get_timestamp[get_timestamp == date_here].index.values)].copy().reset_index(drop=True)
 
         if len(data_to_fused) > 0:
             data_to_fused = degradationSensorFusion(data_to_fused, sensorToFuse, weights)

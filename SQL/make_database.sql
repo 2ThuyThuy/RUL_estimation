@@ -154,21 +154,18 @@ select *
 from MachineRaw 
 where MachineRaw.Timestamp = '2023-01-30' and MachineRaw.Unit = 176;
 
-select * from machineprocessed;
+
 
 
 select * from ReportRUL;
 
 select * from ReportRUL where Unit = 176;
-select * from machineprocessed where Unit = 176;
+select * from machineprocessed where Unit = 176; 
+select * from machineraw where Unit = 176;
 
 # select Timestep >= 50
 delete  from MachineProcessed
 where Timestep = 77;
 
-#`MachineProcessed`.`Timestamp` <= '2023-04-17'
 
-DELETE FROM `ReportRUL` WHERE   `ReportRUL`.`day_predict` > '2023-03-29';
-
-DELETE FROM `MachineProcessed` WHERE   `MachineProcessed`.`Timestamp` > '2023-03-29';
 
