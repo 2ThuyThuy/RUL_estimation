@@ -159,15 +159,25 @@ def pie_chart():
 
     nums_machine = len(db.session.query(MachineRaw.Unit,
                                         MachineRaw.is_user == 1).distinct().all())
-    reportRUL = ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
-                                       ReportRUL.is_user == 1).all()
-    if len(reportRUL) > 0:
-        df_report = pd.DataFrame.from_records(ReportRUL.many_to_json(reportRUL))
+    # reportRUL = ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+    #                                    ReportRUL.is_user == 1).all()
+    # if len(reportRUL) > 0:
+    #     df_report = pd.DataFrame.from_records(ReportRUL.many_to_json(reportRUL))
+    #     good = len(df_report[df_report.category == 'Good'])
+    #     observe = len(df_report[df_report.category == 'observe'])
+    #     warning = len(df_report[df_report.category == 'warning'])
+    #     error = nums_machine - (good + observe + warning)
 
-        good = len(df_report[df_report.category == 'Good'])
-        observe = len(df_report[df_report.category == 'observe'])
-        warning = len(df_report[df_report.category == 'warning'])
-        error = nums_machine - (good + observe + warning)
+    good = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                      ReportRUL.category == "Good",
+                                      ReportRUL.is_user == 1).all())
+    observe = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                         ReportRUL.category == "observe",
+                                         ReportRUL.is_user == 1).all())
+    warning = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                         ReportRUL.category == "warning",
+                                         ReportRUL.is_user == 1).all())
+    error = nums_machine - (good + observe + warning)
 
     data = {
         'labels': ['good', 'observe', 'warning', 'error'],
