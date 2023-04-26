@@ -113,7 +113,16 @@ create TABLE `TrainDataFused` (
   `Timestep` int
 );
 
-
+create TABLE `Consulting` (
+  `id` int  AUTO_INCREMENT primary key,
+  `first_name` varchar(50),
+  `last_name` varchar(50),
+  `email` varchar(200),
+  `phone_number` varchar(20),
+  `messages` TEXT
+);
+insert into `Consulting` (first_name, last_name, email, phone_number, messages) values ("Thuy", "Nguyen","ThuyThuy@gmail.com","01231321","Tôi muốn tìm hiểu thêm về bảo trì dự đoán");
+select * from `Consulting`
 
 
 ALTER TABLE `UserMachine` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`);
