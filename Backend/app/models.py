@@ -264,3 +264,7 @@ class ReportRUL(db.Model):
             }
             items.append(item)
         return items
+
+    @classmethod
+    def get_by_category(cls, category):
+        return cls.query.filter_by(category=category).all()

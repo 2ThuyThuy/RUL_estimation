@@ -74,8 +74,8 @@ def increase_day():
                 df_processed.Unit.isin(get_unit[get_unit > 50].index.values)].copy().reset_index(drop=True)
             ## check have data now
             # print(get_timestamp[get_timestamp == date_here].index.values)
-            data_to_fused = df_processed[
-                df_processed.Unit.isin(get_timestamp[get_timestamp == date_here].index.values)].copy().reset_index(
+            data_to_fused = data_to_fused[
+                data_to_fused.Unit.isin(get_timestamp[get_timestamp == date_here].index.values)].copy().reset_index(
                 drop=True)
 
         if len(data_to_fused) > 0:
@@ -180,26 +180,146 @@ def pie_chart():
                                              ReportRUL.is_user == 1).all())
 
         error = nums_machine - (good + observe + warning)
+        # data = {
+        #     "good": good,
+        #     "observe": observe,
+        #     "warning": warning,
+        #     "error": error
+        # }
 
     data = {
         'labels': ['good', 'observe', 'warning', 'error'],
-        'data': [good, observe, warning, error]
-
+        'datasets': (
+            {
+                'label': '',
+                'data': [good, observe, warning, error],
+                'backgroundColor': [
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 205, 86)',
+                    'rgb(236, 147, 44)',
+                    'rgb(187, 10, 33)'
+                ],
+                'hoverOffset': 4
+            }
+        )
     }
+    return send_result(data=data, message="pie chart!")
+
+
+@api.route('/linechart_admin', methods=['GET'])
+def lineChart_admin():
+
+    with open('app/files/data/date_now.txt', 'r') as file:
+        get_day = file.readline()
+        file.close()
+
+    date_now = datetime.strptime(get_day, '%Y-%m-%d').date()
+    last_15days = date_now - timedelta(days=15)
+
+    nums_machine = len(db.session.query(MachineRaw.Unit,
+                                        MachineRaw.is_user == 1).distinct().all())
+    check_report = len(ReportRUL.query.filter(ReportRUL.is_user == 1).all())
+
+
+    report = ReportRUL.query.filter(ReportRUL.day_predict >= last_15days.strftime("%Y-%m-%d"),
+                                    ReportRUL.day_predict <= last_15days.strftime("%Y-%m-%d"),
+                                    ReportRUL.is_user == 1).all()
+
+    labels = []
+    datasets = []
+    data_good, data_observe, data_warning, data_error = [], [], [], []
+    ## get data 15 day ago
+    for num in range(int(15)):
+        date_here = last_15days + timedelta(days=num + 1)
+        report = ReportRUL.query.filter(ReportRUL.day_predict == date_here.strftime("%Y-%m-%d"),
+                                        ReportRUL.is_user == 1).all()
+
+        labels.append(date_here.strftime("%Y-%m-%d"))
+
+        good, observe, warning, error = 0, 0, 0, 0
+        df_report = pd.DataFrame.from_records(ReportRUL.many_to_json(report))
+        if check_report > 0:
+            good = len(df_report[df_report.category == "Good"])
+            observe = len(df_report[df_report.category == "observe"])
+            warning = len(df_report[df_report.category == "warning"])
+            error = nums_machine - (good + observe + warning)
+        data_good.append(good)
+        data_observe.append(observe)
+        data_warning.append(warning)
+        data_error.append(error)
+
+
+    data = {
+        "Labels": labels,
+        "datasets":[
+            {
+                "label": "Good",
+                "data": data_good,
+                "borderColor": "'rgb(54, 162, 235)'",
+                "backgroundColor": "rgb(54, 162, 235)"
+            },
+            {
+                "label": "Good",
+                "data": data_observe,
+                "borderColor": "rgb(255, 205, 86)",
+                "backgroundColor": "rgb(255, 205, 86)"
+            },
+            {
+                "label": "Good",
+                "data": data_warning,
+                "borderColor": "rgb(236, 147, 44)",
+                "backgroundColor": "rgb(236, 147, 44)"
+            },
+            {
+                "label": "Good",
+                "data": data_error,
+                "borderColor": "rgb(187, 10, 33)",
+                "backgroundColor": "rgb(187, 10, 33)"
+            }
+        ]
+    }
+    return send_result(data=data, message="LineChart chart!")
+
+
+
+
+@api.route('/calendar_admin', methods=['GET'])
+def calendar():
+
+    with open('app/files/data/date_now.txt', 'r') as file:
+        get_day = file.readline()
+        file.close()
+    date_now = datetime.strptime(get_day, '%Y-%m-%d').date()
+    report = ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
+                                    ReportRUL.is_user == 1).all()
+    data = []
+
+    if len(report) > 0:
+        for each_report in report:
+            event = {
+                "Title": f"Unit {each_report.Unit} Error",
+                "allDay": True,
+                "start":  each_report.day_error.strftime("%Y-%m-%d"),
+                "end": each_report.day_error.strftime("%Y-%m-%d")
+            }
+            data.append(event)
     return send_result(data=data, message="main admin!")
+
 
 
 # add jwt here
 @api.route('/main_admin', methods=['GET'])
 def main_admin():
     nums_clients = len(User.query.filter(User.role == 0).all())
-
     nums_machine = len(db.session.query(MachineRaw.Unit,
                                         MachineRaw.is_user == 1).distinct().all())
+
     data = {
         'nums_clients': nums_clients,
         'nums_machine': nums_machine
     }
+
     return send_result(data=data, message="main admin!")
 
-## get here
+
+
