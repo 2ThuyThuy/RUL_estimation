@@ -119,7 +119,8 @@ create TABLE `Consulting` (
   `last_name` varchar(50),
   `email` varchar(200),
   `phone_number` varchar(20),
-  `messages` TEXT
+  `messages` TEXT,
+  `category` varchar(255)
 );
 insert into `Consulting` (first_name, last_name, email, phone_number, messages) values ("Thuy", "Nguyen","ThuyThuy@gmail.com","01231321","Tôi muốn tìm hiểu thêm về bảo trì dự đoán");
 select * from `Consulting`
@@ -131,7 +132,7 @@ ALTER TABLE `UserMachine` ADD FOREIGN KEY (`Unit`) REFERENCES `MachineProcessed`
 #ALTER TABLE`ReportRUL` ADD FOREIGN KEY (`Unit`) REFERENCES `MachineProcessed` (`Unit`) ON DELETE CASCADE;
 
 
-insert into UserMachineRaw (user_id, Unit) values ("617968d0-d12b-11ed-a29f-2e2ce998040e", 176);
+insert into UserMachineRaw (user_id, Unit) values ("a08bb8ca-e4cf-11ed-9118-00e01a680029", 176);
 
 
 
