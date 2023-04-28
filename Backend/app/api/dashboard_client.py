@@ -12,25 +12,25 @@ from flask_jwt_extended import (
 api = Blueprint('dashboard_client', __name__)
 
 
-@api.route('/linechart_client', method=['Get'])
-@jwt_required()
-def linechart_client():
-    with open('app/files/data/date_now.txt', 'r') as file:
-        get_day = file.readline()
-        file.close()
-
-    current_user = get_jwt_identity()
-
-    user = User.query.filter_by(user_id=current_user).first()
-    machine = MachineRaw.query.join(UserMachineRaw).filter(UserMachineRaw.user_id == current_user).all()
-    unit = MachineRaw.get_Unit_in_obj(machine)
-
-
-    data = {
-        "SOMETHING": "KHUM"
-    }
-
-    return send_result(data=data, message=" successfully!")
+# @api.route('/linechart_client', method=['Get'])
+# @jwt_required()
+# def linechart_client():
+#     with open('app/files/data/date_now.txt', 'r') as file:
+#         get_day = file.readline()
+#         file.close()
+#
+#     current_user = get_jwt_identity()
+#
+#     user = User.query.filter_by(user_id=current_user).first()
+#     machine = MachineRaw.query.join(UserMachineRaw).filter(UserMachineRaw.user_id == current_user).all()
+#     unit = MachineRaw.get_Unit_in_obj(machine)
+#
+#
+#     data = {
+#         "SOMETHING": "KHUM"
+#     }
+#
+#     return send_result(data=data, message=" successfully!")
 
 @api.route('/main_client', methods=['GET'])
 @jwt_required()

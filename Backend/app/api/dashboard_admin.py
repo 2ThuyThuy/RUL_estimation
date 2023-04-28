@@ -180,29 +180,25 @@ def pie_chart():
                                              ReportRUL.is_user == 1).all())
 
         error = nums_machine - (good + observe + warning)
-        # data = {
-        #     "good": good,
-        #     "observe": observe,
-        #     "warning": warning,
-        #     "error": error
-        # }
-
     data = {
-        'labels': ['good', 'observe', 'warning', 'error'],
-        'datasets': (
-            {
-                'label': '',
-                'data': [good, observe, warning, error],
-                'backgroundColor': [
-                    'rgb(54, 162, 235)',
-                    'rgb(255, 205, 86)',
-                    'rgb(236, 147, 44)',
-                    'rgb(187, 10, 33)'
-                ],
-                'hoverOffset': 4
-            }
-        )
+        'datasets': [good, observe, warning, error]
     }
+    # data = {
+    #     'labels': ['good', 'observe', 'warning', 'error'],
+    #     'datasets': (
+    #         {
+    #             'label': '',
+    #             'data': [good, observe, warning, error],
+    #             'backgroundColor': [
+    #                 'rgb(54, 162, 235)',
+    #                 'rgb(255, 205, 86)',
+    #                 'rgb(236, 147, 44)',
+    #                 'rgb(187, 10, 33)'
+    #             ],
+    #             'hoverOffset': 4
+    #         }
+    #     )
+    # }
     return send_result(data=data, message="pie chart!")
 
 
@@ -250,33 +246,38 @@ def lineChart_admin():
 
 
     data = {
-        "Labels": labels,
-        "datasets":[
-            {
-                "label": "Good",
-                "data": data_good,
-                "borderColor": "'rgb(54, 162, 235)'",
-                "backgroundColor": "rgb(54, 162, 235)"
-            },
-            {
-                "label": "Good",
-                "data": data_observe,
-                "borderColor": "rgb(255, 205, 86)",
-                "backgroundColor": "rgb(255, 205, 86)"
-            },
-            {
-                "label": "Good",
-                "data": data_warning,
-                "borderColor": "rgb(236, 147, 44)",
-                "backgroundColor": "rgb(236, 147, 44)"
-            },
-            {
-                "label": "Good",
-                "data": data_error,
-                "borderColor": "rgb(187, 10, 33)",
-                "backgroundColor": "rgb(187, 10, 33)"
-            }
-        ]
+        "labels": labels,
+        "data_good": data_good,
+        "data_observe": data_observe,
+        "data_warning": data_warning,
+        "data_error": data_error
+
+        # "datasets":[
+        #     {
+        #         "label": "Good",
+        #         "data": data_good,
+        #         "borderColor": "'rgb(54, 162, 235)'",
+        #         "backgroundColor": "rgb(54, 162, 235)"
+        #     },
+        #     {
+        #         "label": "Good",
+        #         "data": data_observe,
+        #         "borderColor": "rgb(255, 205, 86)",
+        #         "backgroundColor": "rgb(255, 205, 86)"
+        #     },
+        #     {
+        #         "label": "Good",
+        #         "data": data_warning,
+        #         "borderColor": "rgb(236, 147, 44)",
+        #         "backgroundColor": "rgb(236, 147, 44)"
+        #     },
+        #     {
+        #         "label": "Good",
+        #         "data": data_error,
+        #         "borderColor": "rgb(187, 10, 33)",
+        #         "backgroundColor": "rgb(187, 10, 33)"
+        #     }
+        # ]
     }
     return send_result(data=data, message="LineChart chart!")
 
