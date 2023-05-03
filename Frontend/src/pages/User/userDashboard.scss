@@ -1,0 +1,84 @@
+.user-dashboard {
+    background-color: #efeff7;
+    min-height: 100vh;
+    width: 100vw;
+    .container {
+      width: 100%;
+      padding-top: 140px;
+      padding-left: 290px;
+      .line-chart {
+        background-color: #fff;
+        width: 800px;
+        height: auto;
+      }
+      .pie-chart {
+        background-color: #fff;
+        width: 300px;
+        height: auto;
+      }
+      .stacked-bar {
+        background-color: #fff;
+        width: 800px;
+        height: auto;
+        margin-left: 80px;
+      }
+    }
+  
+    .report {
+      font-weight: bold;
+      background-color: #fff;
+      width: 270px;
+      padding: 30px;
+      position: absolute;
+      top: 140px;
+      left: 1120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      > .heading {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        > .export {
+          font-weight: 600;
+          color: red;
+          border-radius: 18px;
+          padding: 5px 20px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          background-color: pink;
+          cursor: pointer;
+          font-size: 12px;
+        }
+      }
+      > .title {
+        margin-top: 15px;
+        font-size: 21px;
+        text-align: center;
+        width: 100%;
+      }
+      > .number {
+        margin-top: 15px;
+        line-height: 1.2;
+        color: #1b65d6;
+        font-size: 65px;
+      }
+      > .today {
+        margin: 10px 0;
+        color: #6295e3;
+        font-size: 46px;
+      }
+      > .reliable_percent {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 20px;
+        > .percentage {
+          color: #2a935a;
+        }
+      }
+    }
+  }
+  

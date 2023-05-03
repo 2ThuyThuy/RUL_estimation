@@ -1,0 +1,43 @@
+.reason {
+  height: max-content;
+  padding: 80px 200px;
+  background-color: #edf4fd;
+
+  h1 {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 77px;
+    color: #fe6060;
+  }
+
+  p {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+    color: #000000;
+  }
+
+  .reason__top {
+    .reason__left {
+    }
+
+    .reason__right {
+    }
+  }
+
+  .reason__bottom {
+    img {
+      width: 100%;
+    }
+
+    .reason__bottom-des {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}

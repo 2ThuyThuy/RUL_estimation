@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import AuthService from "../../services/auth.service";
 // import { userAPI } from "./userAPI";
 
@@ -9,19 +8,28 @@ const authService = new AuthService();
 export const fetchLogin = createAsyncThunk(
   "auth/login",
   async (authCredentialDto, thunkAPI) => {
-    const response = await authService.login(authCredentialDto);
-    return response.data;
+    try {
+      const response = await authService.login(authCredentialDto);
+      return response.data;
+    } catch (err) {
+      console.log(err);
+      return err.response.data;
+    }
   }
 );
 
 export const fetchRegister = createAsyncThunk(
   "auth/register",
   async (authCredentialDto, thunkAPI) => {
-    const response = await authService.register(authCredentialDto);
-    return response.data;
+    try {
+      const response = await authService.register(authCredentialDto);
+      return response.data;
+    } catch (err) {
+      console.log(err);
+      return err.response.data;
+    }
   }
 );
-
 const initialState = {
   entities: [],
   loading: "idle",

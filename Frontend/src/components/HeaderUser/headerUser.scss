@@ -1,0 +1,41 @@
+.header {
+    position: fixed;
+    z-index: 3;
+    //   height: 80px;
+    width: 100%;
+    // background-color: #3c6dcd;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  
+    .header__left {
+      display: flex;
+      align-items: center;
+  
+      img {
+        width: 209px;
+      }
+  
+      a {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 400;
+        font-size: 20px;
+        margin-left: 30px;
+        color: #ffffff;
+        margin-left: 30px;
+      }
+    }
+  
+    .header__right {
+      a {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 400;
+        font-size: 20px;
+        margin-left: 30px;
+  
+        color: #ffffff;
+      }
+    }
+  }

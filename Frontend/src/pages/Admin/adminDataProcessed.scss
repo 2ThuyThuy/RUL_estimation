@@ -1,0 +1,14 @@
+.table-dashboard {
+    background-color: #efeff7;
+    min-height: 100vh;
+    width: 100vw;
+    > .container {
+      width: 100%;
+      overflow: hidden;
+      padding-top: 140px;
+      > .data-table {
+        margin-left: 290px;
+      }
+    }
+  }
+  

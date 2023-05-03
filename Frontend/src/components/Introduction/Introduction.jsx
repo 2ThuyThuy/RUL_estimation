@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
 import background from "../../assets/img/background.jpg";
 import "./introduction.scss";
+import Button from "../Button/Button";
 
 const Introduction = () => {
   return (
@@ -17,6 +18,14 @@ const Introduction = () => {
           promote your business in the best way and get new achievements. We
           give you the opportunity the rest depends on you.
         </h3>
+        <div className="introduction__center-buttons flex flex-row gap-8 justify-center">
+          <Button background="#FE6060" color="#FFFFFF">
+            GET STARTED
+          </Button>
+          <Button background="#EEEEEE" color="#3C6DCD">
+            LEARN MORE
+          </Button>
+        </div>
       </div>
     </div>
   );

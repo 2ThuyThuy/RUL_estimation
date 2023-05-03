@@ -1,10 +1,10 @@
-.login {
+.register {
   height: 100vh;
   width: 100%;
   display: flex;
 }
 
-.login__left {
+.register__left {
   height: 100%;
   width: 50%;
   img {
@@ -13,7 +13,7 @@
   }
 }
 
-.login__right {
+.register__right {
   height: 100%;
   width: 50%;
   display: flex;
@@ -21,7 +21,7 @@
   align-items: center;
   justify-content: center;
 
-  .login__right-title {
+  .register__right-title {
     img {
       width: 297px;
       height: 61px;
@@ -31,7 +31,7 @@
   form {
     margin-top: 100px;
 
-    .login__right-form-group {
+    .register__right-form-group {
       position: relative;
 
       a {
@@ -44,7 +44,7 @@
     }
   }
 
-  .login__right-button {
+  .register__right-button {
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,0 +1,28 @@
+.admin-aside {
+  position: fixed;
+  left: 0;
+  top: 120px;
+  padding: 20px 0;
+  nav {
+    border-left: 10px solid #fff;
+    background-color: #f6f6fc;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    a {
+      padding: 10px 16px;
+      border-left: 5px solid rgba(0, 0, 0, 0);
+    }
+    a:hover {
+      color: red;
+      background-color: #fff;
+      border-left: 5px solid red;
+      cursor: pointer;
+    }
+    a.active {
+      color: red;
+      background-color: #fff;
+      border-left: 5px solid red;
+    }
+  }
+}

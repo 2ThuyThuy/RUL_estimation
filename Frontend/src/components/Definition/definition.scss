@@ -1,0 +1,34 @@
+.definition {
+  height: 100vh;
+  // height: max-content;
+  background-color: #edf4fd;
+  padding: 80px 200px;
+  .definition__left {
+    img {
+      width: 462px;
+      height: 648px;
+    }
+  }
+
+  .definition__right {
+    h1 {
+      font-family: "Inter";
+      font-style: normal;
+      font-weight: 700;
+      font-size: 64px;
+      line-height: 77px;
+      width: 65%;
+      color: #fe6060;
+    }
+
+    p {
+      font-family: "Inter";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 24px;
+      // width: 65%;
+      color: #000000;
+    }
+  }
+}

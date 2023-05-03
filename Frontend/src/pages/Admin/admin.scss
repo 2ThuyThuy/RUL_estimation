@@ -1,0 +1,131 @@
+.admin-dashboard {
+  background-color: #efeff7;
+  min-height: 100vh;
+  width: 100vw;
+  .container {
+    width: 100vw;
+    position: relative;
+    .line-chart {
+      position: absolute;
+      top: 280px;
+      left: 290px;
+      background-color: #fff;
+      width: 800px;
+      height: auto;
+    }
+    .status-bar {
+      position: absolute;
+      top: 140px;
+      left: 290px;
+      width: 800px;
+      height: auto;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+  .pie-chart {
+    position: absolute;
+    top: 140px;
+    right: 118px;
+    background-color: #fff;
+    width: 300px;
+    height: auto;
+  }
+  .date-now {
+    position: absolute;
+    top: 450px;
+    right: 118px;
+    background-color: #fff;
+    padding: 20px;
+    width: 300px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: bold;
+    .date {
+      margin-top: 10px;
+      color: #6295e3;
+      font-size: 27px;
+    }
+    .date-control {
+      margin-top: 30px;
+      width: 100%;
+      display: flex;
+      padding: 0 80px;
+      justify-content: space-between;
+      align-items: center;
+      input {
+        font-size: 30px;
+        width: 55px;
+        padding: 0px 8px;
+        border-bottom: 1px solid #000;
+      }
+      .prev,
+      .next:hover {
+        cursor: pointer;
+      }
+      .prev {
+        position: relative;
+        background-color: #3c6dcd;
+        text-align: left;
+      }
+      .prev:before,
+      .prev:after {
+        content: '';
+        position: absolute;
+        background-color: inherit;
+      }
+      .prev,
+      .prev:before,
+      .prev:after {
+        width: 20px;
+        height: 20px;
+        border-top-right-radius: 70%;
+      }
+
+      .prev {
+        transform: rotate(-30deg) skewX(-30deg) scale(1, 0.866);
+      }
+      .prev:before {
+        transform: rotate(-135deg) skewX(-45deg) scale(1.414, 0.707)
+          translate(0, -50%);
+      }
+      .prev:after {
+        transform: rotate(135deg) skewY(-45deg) scale(0.707, 1.414)
+          translate(50%);
+      }
+
+      .next {
+        position: relative;
+        background-color: #3c6dcd;
+        text-align: left;
+      }
+      .next:before,
+      .next:after {
+        content: '';
+        position: absolute;
+        background-color: inherit;
+      }
+      .next,
+      .next:before,
+      .next:after {
+        width: 20px;
+        height: 20px;
+        border-top-right-radius: 70%;
+      }
+
+      .next {
+        transform: rotate(-90deg) skewX(-30deg) scale(1, 0.866);
+      }
+      .next:before {
+        transform: rotate(-135deg) skewX(-45deg) scale(1.414, 0.707)
+          translate(0, -50%);
+      }
+      .next:after {
+        transform: rotate(135deg) skewY(-45deg) scale(0.707, 1.414)
+          translate(50%);
+      }
+    }
+  }
+}
