@@ -45,11 +45,6 @@ def login():
         return send_error(message='Invalid username or password.\nPlease try again')
 
     access_token = create_access_token(identity=user.user_id, expires_delta=ACCESS_EXPIRES)
-    #refresh_token = create_refresh_token(identity=user.id, expires_delta=REFRESH_EXPIRES)
-
-    # Store the tokens in our store with a status of not currently revoked.
-    # Token.add_token_to_database(access_token, user.id)
-    # Token.add_token_to_database(refresh_token, user.id)
 
     data = {
         'username': user.username,
@@ -57,7 +52,8 @@ def login():
         'first_name': user.first_name,
         'last_name': user.last_name,
         'email': user.email,
-        'jwt': access_token
+        'jwt': access_token,
+        'role': user.role
     }
     return send_result(data=data, message="Logged in successfully!")
 

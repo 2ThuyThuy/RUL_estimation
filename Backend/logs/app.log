@@ -1,3 +1,11 @@
 2023-Apr-05 21:00:58 Parameters error: 'NoneType' object has no attribute 'strip'
 Parameters error: 400 Bad Request: The browser (or proxy) sent a request that this server could not understand.
 Parameters error: 'NoneType' object has no attribute 'strip'
+2023-May-03 16:39:14 Parameters error: 'NoneType' object has no attribute 'strip'
+Parameters error: '' is too short
+
+Failed validating 'minLength' in schema['properties']['last_name']:
+    {'maxLength': 50, 'minLength': 1, 'type': 'string'}
+
+On instance['last_name']:
+    ''

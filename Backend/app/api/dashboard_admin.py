@@ -10,6 +10,11 @@ from sqlalchemy import func
 import pandas as pd
 from app.extensions import logger, db, model_trained
 import warnings
+from flask_jwt_extended import (
+    jwt_required, create_access_token,
+    get_jwt_identity, create_refresh_token,
+    get_jwt
+)
 
 warnings.filterwarnings("ignore")
 
@@ -17,6 +22,7 @@ api = Blueprint('dashboard_admin', __name__)
 
 
 @api.route('/inc_day', methods=['PUT'])
+
 def increase_day():
     json_data = request.get_json()
     num_inc = json_data.get('days', None)
@@ -183,22 +189,6 @@ def pie_chart():
     data = {
         'datasets': [good, observe, warning, error]
     }
-    # data = {
-    #     'labels': ['good', 'observe', 'warning', 'error'],
-    #     'datasets': (
-    #         {
-    #             'label': '',
-    #             'data': [good, observe, warning, error],
-    #             'backgroundColor': [
-    #                 'rgb(54, 162, 235)',
-    #                 'rgb(255, 205, 86)',
-    #                 'rgb(236, 147, 44)',
-    #                 'rgb(187, 10, 33)'
-    #             ],
-    #             'hoverOffset': 4
-    #         }
-    #     )
-    # }
     return send_result(data=data, message="pie chart!")
 
 
@@ -234,7 +224,7 @@ def lineChart_admin():
 
         good, observe, warning, error = 0, 0, 0, 0
         df_report = pd.DataFrame.from_records(ReportRUL.many_to_json(report))
-        if check_report > 0:
+        if len(report) > 0:
             good = len(df_report[df_report.category == "Good"])
             observe = len(df_report[df_report.category == "observe"])
             warning = len(df_report[df_report.category == "warning"])
@@ -282,44 +272,109 @@ def lineChart_admin():
     return send_result(data=data, message="LineChart chart!")
 
 
-
-
 @api.route('/calendar_admin', methods=['GET'])
 def calendar():
-
     with open('app/files/data/date_now.txt', 'r') as file:
         get_day = file.readline()
         file.close()
     date_now = datetime.strptime(get_day, '%Y-%m-%d').date()
     report = ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
                                     ReportRUL.is_user == 1).all()
-    data = []
+    data_events = []
 
     if len(report) > 0:
         for each_report in report:
+            color = 'blue'
+            delta = each_report.day_error - date_now
+            if delta.days <= 15:
+                color = 'red'
+            elif delta.days <= 30:
+                color = "orange"
+
             event = {
-                "Title": f"Unit {each_report.Unit} Error",
-                "allDay": True,
+                "title": f"Unit {each_report.Unit} Error",
                 "start":  each_report.day_error.strftime("%Y-%m-%d"),
-                "end": each_report.day_error.strftime("%Y-%m-%d")
+                "end": each_report.day_error.strftime("%Y-%m-%d"),
+                "color": color
             }
-            data.append(event)
+            data_events.append(event)
+
+    data = {
+        "date_now": get_day,
+        "data_events": data_events
+    }
+
+    return send_result(data=data, message="main admin!")
+
+@api.route('/admin_dataraw', methods=['GET'])
+def admin_dataraw():
+
+    machine_raw = MachineRaw.query.with_entities(MachineRaw.Unit, func.Max(MachineRaw.Timestep),
+                                                 func.min(MachineRaw.Timestamp),
+                                                 func.Max(MachineRaw.Timestamp),
+                                                 ).group_by(MachineRaw.Unit).all()
+    data = []
+    for obj in machine_raw:
+        item = {
+            "Unit": obj[0],
+            "Max_Timestep": obj[1],
+            "Min_Timestamp": obj[2].strftime("%Y-%m-%d"),
+            "Max_Timestamp": obj[3].strftime("%Y-%m-%d"),
+        }
+        data.append(item)
+
     return send_result(data=data, message="main admin!")
 
 
+@api.route('/admin_dataprocessed', methods=['GET'])
+def admin_dataprocessed():
+    machine_processed = MachineProcessed.query.with_entities(MachineProcessed.Unit, func.Max(MachineProcessed.Timestep),
+                                                 func.min(MachineProcessed.Timestamp),
+                                                 func.Max(MachineProcessed.Timestamp),
+                                                 ).group_by(MachineProcessed.Unit).all()
+    data = []
+    for obj in machine_processed:
+        item = {
+            "Unit": obj[0],
+            "Max_Timestep": obj[1],
+            "Min_Timestamp": obj[2].strftime("%Y-%m-%d"),
+            "Max_Timestamp": obj[3].strftime("%Y-%m-%d"),
+        }
+        data.append(item)
+    return send_result(data=data, message="main admin!")
+
+
+@api.route('admin_managerUser')
+def admin_mamangeruser():
+
+    
+    data = {
+
+    }
+    return send_result(data=data, message="main admin!")
 
 # add jwt here
 @api.route('/main_admin', methods=['GET'])
+@jwt_required()
 def main_admin():
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(user_id=current_user).first()
+    if not user.role:
+        return send_result(message="Only admin to use!")
+
     nums_clients = len(User.query.filter(User.role == 0).all())
     nums_machine = len(db.session.query(MachineRaw.Unit,
                                         MachineRaw.is_user == 1).distinct().all())
 
+    with open('app/files/data/date_now.txt', 'r') as file:
+        get_day = file.readline()
+        file.close()
+
     data = {
         'nums_clients': nums_clients,
-        'nums_machine': nums_machine
+        'nums_machine': nums_machine,
+        'day_now': get_day
     }
-
     return send_result(data=data, message="main admin!")
 
 

@@ -178,5 +178,3 @@ delete  from MachineProcessed
 where Timestep = 77;
 
 select * from ReportRUL where Unit = 176;
-
-
