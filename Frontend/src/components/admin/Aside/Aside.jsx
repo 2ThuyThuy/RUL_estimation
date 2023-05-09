@@ -4,6 +4,10 @@ import { Link, NavLink } from 'react-router-dom';
 import './aside.scss';
 
 const Aside = () => {
+  const Logout = event => {
+    sessionStorage.removeItem('token')
+  };
+
   return (
     <div className="admin-aside">
       <nav>
@@ -14,6 +18,7 @@ const Aside = () => {
         <NavLink to={'/admin/manager_users'} end>Manager users</NavLink>
         <NavLink to={'/admin/consulting'} end>Consulting</NavLink>
         <NavLink to={'/admin/profile'} end>Profile</NavLink>
+        <NavLink to={'/'} Onclick={Logout} end>Logout</NavLink>
       </nav>
     </div>
   );

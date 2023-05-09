@@ -1,6 +1,7 @@
 import { Line } from 'react-chartjs-2';
 import { Pie } from 'react-chartjs-2';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useEffect, useMemo, useState } from "react";
 import Aside from '../../components/admin/Aside/Aside';
 import StatusBoard from '../../components/admin/StatusBoard/StatusBoard';
@@ -8,6 +9,8 @@ import { options, data } from '../../config/lineChart';
 import { pieData } from '../../config/pieChart';
 import Header from '../../components/Header/Header';
 import HeaderUser from '../../components/HeaderUser/HeaderUser'
+
+
 
 import './admin.scss';
 
@@ -28,20 +31,20 @@ function ConvertDate(iosDate){
 
 
 const Admin = () => {
+
   const [dataPie, setDataPie] = useState(null);
   const [dataLineChart, setDataLinechart] = useState(null)
   const [customers, setCustomers] = useState(0);
   const [products, SetProducts] = useState(0);
   const [daynow, setDaynow] = useState("___");
-
   const [dateText, setDateText] = useState(1)
 
+  const navigate = useNavigate();
+  let userToken = sessionStorage.getItem('token');
 
   const handleChange = event => {
     setDateText(parseInt(event.target.value));
   };
-
-
 
 
   const prev = async () => {
@@ -144,11 +147,21 @@ const Admin = () => {
   }
 
   const info_main = async () => {
+    if(userToken === null) {
+      console.log("errrrr")
+      navigate('/')
+      
+    }else {
+      userToken = userToken.replaceAll('"','')
+    }
+
       let config = {
         method: 'get',
         maxBodyLength: Infinity,
         url: `${process.env.REACT_APP_API_URL}/api/dashboard_admin/main_admin`,
-        headers: { }
+        headers: { 
+          'Authorization': `Bearer ${userToken}`
+        }
       };
       axios.request(config)
       .then((response) => {
@@ -198,6 +211,7 @@ const Admin = () => {
   }
 
   useEffect(() => {
+
         callApi()
         callLineChart()
         info_main()
@@ -209,6 +223,8 @@ const Admin = () => {
     callApi();
     callLineChart();
   }
+
+
   const change_inc=() => {
     next();
     callApi();

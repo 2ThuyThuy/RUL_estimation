@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import login from '../../assets/img/login.jpg';
 import login1 from '../../assets/img/login1.png';
 import './login.scss';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { fetchLogin } from '../../store/authSlice/authSlice';
+import PropTypes from 'prop-types';
 
-const Login = () => {
+const Login = ( ) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
+  const [checkLogin, setCheckLogin] = useState(false);
 
   return (
     <div className="login">
@@ -33,7 +36,21 @@ const Login = () => {
             )
               .then(unwrapResult)
               .then((originalPromiseResult) => {
-                console.log('result', originalPromiseResult);
+                const res = originalPromiseResult.data
+                
+                if (res != null)
+                {
+                  sessionStorage.setItem('token', JSON.stringify(res.jwt));
+                  sessionStorage.setItem('user_name', JSON.stringify(res.username))
+                  if (res.role == true){
+                    navigate('/admin')
+                  }else {
+                    navigate('/user/userdashboard')
+                  }
+                  
+                }else {
+                  console.log(originalPromiseResult.message)
+                }
               })
               .catch((rejectedValueOrSerializedError) => {
                 console.log(rejectedValueOrSerializedError);
@@ -69,7 +86,7 @@ const Login = () => {
           <div className="flex flex-row gap-8">
             <div className="basis-1/2">
               <div className="login__right-button mt-20">
-                <button>Sign in</button>
+                <button >Sign in</button>
               </div>
             </div>
             <div className="basis-1/2">
@@ -87,3 +104,7 @@ const Login = () => {
 };
 
 export default Login;
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+};
+

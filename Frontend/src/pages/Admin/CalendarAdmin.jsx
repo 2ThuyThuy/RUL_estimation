@@ -1,13 +1,17 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-//import Aside from '../../components/user/Aside/Aside';
-import Calendar from '../../components/user/Calendar/Calendar';
-//import Header from '../../components/Header/Header';
-import { Eventcalendar, getJson } from '@mobiscroll/react';
-import HeaderUser from '../../components/HeaderUser/HeaderUser'
 import Aside from '../../components/admin/Aside/Aside';
-
+import HeaderUser from '../../components/HeaderUser/HeaderUser'
 import './calendarAdmin.scss';
+import { Calendar, momentLocalizer  } from 'react-big-calendar' 
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import moment from 'moment'
+// import './userCalendar.scss';
+
+
+
+moment.locale("en-GB");
+const localizer = momentLocalizer(moment)
 
 const CalendarAdmin = () => {
   const [viewType, setViewType] = useState('month');
@@ -61,6 +65,12 @@ const CalendarAdmin = () => {
             
             new_events.push(new_element)
           }
+          new_events.push({
+             start: new Date(res.date_now),
+              end: new Date(res.date_now),
+              title: "day now",
+              color: "green",
+          })
           setEvents(new_events)
 
         }
@@ -78,65 +88,29 @@ const CalendarAdmin = () => {
 
 
 
-  const handleChangeViewType = (type, typeSize) => {
-    setViewType(type);
-    setViewTypeSize(typeSize);
-  };
+
 
   return (
     <div className="calendar-dashboard">
       <HeaderUser backgroundHeader='#3C6DCD' />
       <Aside />
-      <div className="calendar">
-        {/* <Calendar /> */}
-        <div className="view-option">
-          View:
-          <div className="views">
-            <span
-              onClick={() => handleChangeViewType('month', 1)}
-              className={viewType === 'month' ? 'active' : ''}
-            >
-              Month
-            </span>
-            <span
-              className={
-                viewType === 'week' && viewTypeSize === 1 ? 'active' : ''
-              }
-              onClick={() => handleChangeViewType('week', 1)}
-            >
-              1 week
-            </span>
-            <span
-              className={
-                viewType === 'week' && viewTypeSize === 2 ? 'active' : ''
-              }
-              onClick={() => handleChangeViewType('week', 2)}
-            >
-              2 week
-            </span>
-            <span
-              className={
-                viewType === 'week' && viewTypeSize === 3 ? 'active' : ''
-              }
-              onClick={() => handleChangeViewType('week', 3)}
-            >
-              3 week
-            </span>
-          </div>
-        </div>
-        <Eventcalendar
-          view={{
-            calendar: {
-              labels: true,
-              type: viewType,
-              size: viewTypeSize,
-            },
-          }}
-          theme="ios"
-          themeVariant="light"
-          data={events}
-          defaultSelectedDate={defaultDate}
-        />
+      <div className="calendar" style={{ height: 800,width:"auto", paddingTop:"100px"  }}>
+      { defaultDate&&  <Calendar
+            selectable
+            localizer={localizer}
+            defaultDate={defaultDate}
+            defaultView="month"
+            events={events}
+            eventPropGetter={(events) => {
+                const backgroundColor = events.color;
+                return { style: { backgroundColor } }
+              }}
+            style={{ width:"80%",
+            paddingTop:"50px",
+           paddingLeft:"100px",
+           paddingRight:"100px",
+           background:"white"}}
+        />}
       </div>
     </div>
   );
