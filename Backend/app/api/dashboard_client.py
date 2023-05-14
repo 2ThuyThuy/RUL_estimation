@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import Blueprint
+from flask import Blueprint, request
 from datetime import timedelta, datetime
 from app.models import User, MachineRaw, UserMachineRaw, ReportRUL, MachineProcessed
 from app.utils import parse_req, FieldString, send_result, send_error, get_datetime_now
@@ -71,6 +71,55 @@ def dataprocessed_client():
     return send_result(data=data, message="Create user successfully!")
 
 
+@api.route('/profile_client', methods=['GET'])
+@jwt_required()
+def profile_client():
+    current_user = get_jwt_identity()
+
+    user = User.query.filter_by(user_id=current_user).first()
+    data = {
+        'firstName': user.first_name,
+        'lastName': user.last_name,
+        'email': user.email,
+        'phone': user.phone_number
+    }
+
+    return send_result(data=data, message="successfully!")
+
+@api.route('/profile_client', methods=['PUT'])
+@jwt_required()
+def update_client():
+    try:
+        json_data = request.get_json()
+        first_name = json_data.get('first_name')
+        last_name = json_data.get('last_name')
+        email = json_data.get('email')
+        phone_number = json_data.get('phone_number')
+    except Exception as ex:
+        return send_error(message='something error')
+
+
+    current_user = get_jwt_identity()
+    user = User.query.filter_by(user_id=current_user).first()
+
+    user.first_name = first_name
+    user.last_name = last_name
+    user.email = email
+    user.phone_number = phone_number
+    db.session.commit()
+
+    data = {
+        'firstName': user.first_name,
+        'lastName': user.last_name,
+        'email': user.email,
+        'phone': user.phone_number
+    }
+
+    return send_result(data=data, message="successfully!")
+
+
+
+
 @api.route('/report_client', methods=['GET'])
 @jwt_required()
 def report_client():
@@ -102,7 +151,7 @@ def report_client():
     if machine_processed:
         day_start = machine_processed[1]
         delta = date_now - day_start
-        operation = delta.days
+        operation = delta.days + 1
 
     data = {
         "name": user.username,
@@ -120,7 +169,7 @@ def report_client():
             }
         ]
     }
-    return send_result(data=data, message="Create user successfully!")
+    return send_result(data=data, message="successfully!")
 
 
 @api.route('/main_client', methods=['GET'])
@@ -178,4 +227,4 @@ def main_dashboard_client():
         # 'machine': MachineRaw.many_to_json(machine)
     }
 
-    return send_result(data=data, message="Create user successfully!")
+    return send_result(data=data, message="successfully!")

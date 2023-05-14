@@ -190,7 +190,7 @@ class MachineProcessed(db.Model):
             item = {
                 'Unit': obj.Unit,
                 'Timestep': obj.Timestep,
-                'Timestamp': obj.Timestamp,
+                'Timestamp': obj.Timestamp.strftime("%Y-%m-%d"),
                 'op_setting_1': obj.op_setting_1,
                 'op_setting_2': obj.op_setting_2,
                 'op_setting_3': obj.op_setting_3,
@@ -224,6 +224,44 @@ class MachineProcessed(db.Model):
     @classmethod
     def get_by_machine_id(cls, _machine_id):
         return cls.query.get(_machine_id)
+
+
+class Consulting(db.Model):
+    __tablename__ = 'Consulting'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    email = db.Column(db.String(200))
+    phone_number = db.Column(db.String(20))
+    messages = db.Column(db.Text)
+    categoryConsulting = db.Column(db.String(255))
+
+    def to_json(self):
+        return {
+            "ID": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "email": self.email,
+            "phone_number": self.phone_number,
+            "messages": self.messages,
+            "categoryConsulting": self.categoryConsulting,
+        }
+
+    @staticmethod
+    def many_to_json(objects):
+        items = []
+        for obj in objects:
+            item = {
+                'ID': obj.id,
+                'first_name': obj.first_name,
+                'last_name': obj.last_name,
+                'email': obj.email,
+                'phone_number': obj.phone_number,
+                'messages': obj.messages,
+                'categoryConsulting': obj.categoryConsulting
+            }
+            items.append(item)
+        return items
 
 
 class ReportRUL(db.Model):

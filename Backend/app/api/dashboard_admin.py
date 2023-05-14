@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from datetime import timedelta, datetime
-from app.utils import send_result
-from app.models import User, MachineRaw, UserMachineRaw, MachineProcessed, ReportRUL
+from app.utils import send_result, send_error
+from app.models import User, MachineRaw, UserMachineRaw, MachineProcessed, ReportRUL, Consulting
 from app.model_rul import model_kmeans, conditionVariables, load_Normalization, degradationSensorFusion, weights, \
     sensorToFuse, calc_accucary
 
@@ -22,7 +22,6 @@ api = Blueprint('dashboard_admin', __name__)
 
 
 @api.route('/inc_day', methods=['PUT'])
-
 def increase_day():
     json_data = request.get_json()
     num_inc = json_data.get('days', None)
@@ -174,7 +173,7 @@ def pie_chart():
     #     warning = len(df_report[df_report.category == 'warning'])
     #     error = nums_machine - (good + observe + warning)
     check_report = len(ReportRUL.query.filter(ReportRUL.is_user == 1).all())
-    if check_report > 0 :
+    if check_report > 0:
         good = len(ReportRUL.query.filter(ReportRUL.day_predict == date_now.strftime("%Y-%m-%d"),
                                           ReportRUL.category == "Good",
                                           ReportRUL.is_user == 1).all())
@@ -194,7 +193,6 @@ def pie_chart():
 
 @api.route('/linechart_admin', methods=['GET'])
 def lineChart_admin():
-
     with open('app/files/data/date_now.txt', 'r') as file:
         get_day = file.readline()
         file.close()
@@ -205,7 +203,6 @@ def lineChart_admin():
     nums_machine = len(db.session.query(MachineRaw.Unit,
                                         MachineRaw.is_user == 1).distinct().all())
     check_report = len(ReportRUL.query.filter(ReportRUL.is_user == 1).all())
-
 
     report = ReportRUL.query.filter(ReportRUL.day_predict >= last_15days.strftime("%Y-%m-%d"),
                                     ReportRUL.day_predict <= last_15days.strftime("%Y-%m-%d"),
@@ -233,7 +230,6 @@ def lineChart_admin():
         data_observe.append(observe)
         data_warning.append(warning)
         data_error.append(error)
-
 
     data = {
         "labels": labels,
@@ -293,7 +289,7 @@ def calendar():
 
             event = {
                 "title": f"Unit {each_report.Unit} Error",
-                "start":  each_report.day_error.strftime("%Y-%m-%d"),
+                "start": each_report.day_error.strftime("%Y-%m-%d"),
                 "end": each_report.day_error.strftime("%Y-%m-%d"),
                 "color": color
             }
@@ -306,9 +302,9 @@ def calendar():
 
     return send_result(data=data, message="main admin!")
 
+
 @api.route('/admin_dataraw', methods=['GET'])
 def admin_dataraw():
-
     machine_raw = MachineRaw.query.with_entities(MachineRaw.Unit, func.Max(MachineRaw.Timestep),
                                                  func.min(MachineRaw.Timestamp),
                                                  func.Max(MachineRaw.Timestamp),
@@ -329,9 +325,9 @@ def admin_dataraw():
 @api.route('/admin_dataprocessed', methods=['GET'])
 def admin_dataprocessed():
     machine_processed = MachineProcessed.query.with_entities(MachineProcessed.Unit, func.Max(MachineProcessed.Timestep),
-                                                 func.min(MachineProcessed.Timestamp),
-                                                 func.Max(MachineProcessed.Timestamp),
-                                                 ).group_by(MachineProcessed.Unit).all()
+                                                             func.min(MachineProcessed.Timestamp),
+                                                             func.Max(MachineProcessed.Timestamp),
+                                                             ).group_by(MachineProcessed.Unit).all()
     data = []
     for obj in machine_processed:
         item = {
@@ -344,14 +340,59 @@ def admin_dataprocessed():
     return send_result(data=data, message="main admin!")
 
 
+@api.route('/admin_consulting', methods=['GET'])
+def admin_consulting():
+    consults = Consulting.query.all()
+    data = Consulting.many_to_json(consults)
+
+    return send_result(data=data, message="main admin!")
+
+
+@api.route('/delete_consulting', methods=['DELETE'])
+def delete_consulting():
+    try:
+        json_data = request.get_json()
+        id = json_data.get('ID', None)
+    except Exception as ex:
+        return send_error(message='something error')
+
+    print(id)
+    consult = Consulting.query.filter_by(id=id).first()
+    db.session.delete(consult)
+    db.session.commit()
+
+    consults = Consulting.query.all()
+    data = Consulting.many_to_json(consults)
+
+    return send_result(data=data, message="main admin!")
+
+
+@api.route('/update_consulting', methods=['PUT'])
+def update_consulting():
+    try:
+        json_data = request.get_json()
+        id = json_data.get('ID', None)
+        category = json_data.get('category')
+    except Exception as ex:
+        return send_error(message='something error')
+
+    consult = Consulting.query.filter_by(id=id).first()
+    consult.categoryConsulting = category
+    db.session.commit()
+
+    consults = Consulting.query.all()
+    data = Consulting.many_to_json(consults)
+
+    return send_result(data=data, message="main admin!")
+
+
 @api.route('admin_managerUser')
 def admin_mamangeruser():
-
-    
     data = {
 
     }
     return send_result(data=data, message="main admin!")
+
 
 # add jwt here
 @api.route('/main_admin', methods=['GET'])
@@ -376,17 +417,3 @@ def main_admin():
         'day_now': get_day
     }
     return send_result(data=data, message="main admin!")
-
-
-
-
-
-
-
-
-
-
-
-
-
-

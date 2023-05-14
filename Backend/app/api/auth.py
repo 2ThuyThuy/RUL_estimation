@@ -1,6 +1,6 @@
 from datetime import timedelta
-from flask import Blueprint
-from app.models import User
+from flask import Blueprint, request
+from app.models import User, Consulting
 from werkzeug.security import check_password_hash
 from app.utils import parse_req, FieldString, send_result, send_error, get_datetime_now
 from app.extensions import logger,  db,  jwt
@@ -57,7 +57,31 @@ def login():
     }
     return send_result(data=data, message="Logged in successfully!")
 
-#
+
+
+@api.route('/send_message', methods=['POST'])
+def send_message():
+
+    try:
+        json_data = request.get_json()
+        first_name = json_data.get('first_name', None).strip()
+        last_name = json_data.get('last_name', None)
+        email = json_data.get('email', None)
+        phone_number = json_data.get('phone_number', None)
+        messages = json_data.get('messages', None)
+
+    except Exception as ex:
+        logger.error('{} Parameters error: '.format(get_datetime_now().strftime('%Y-%b-%d %H:%M:%S')) + str(ex))
+        return send_error(message='something error')
+
+    new_message = Consulting(first_name=first_name, last_name=last_name, email=email,
+                             phone_number=phone_number, messages=messages, categoryConsulting='Unread')
+
+    db.session.add(new_message)
+    db.session.commit()
+    return send_result(data=new_message.to_json(), message="success")
+
+
 # @api.route('/refresh', methods=['POST'])
 # @jwt_required(refresh=True)
 # def refresh():

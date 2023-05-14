@@ -120,10 +120,10 @@ create TABLE `Consulting` (
   `email` varchar(200),
   `phone_number` varchar(20),
   `messages` TEXT,
-  `category` varchar(255)
+  `categoryConsulting` varchar(255)
 );
 insert into `Consulting` (first_name, last_name, email, phone_number, messages) values ("Thuy", "Nguyen","ThuyThuy@gmail.com","01231321","Tôi muốn tìm hiểu thêm về bảo trì dự đoán");
-select * from `Consulting`
+select * from `Consulting`;
 
 
 ALTER TABLE `UserMachine` ADD FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`);
